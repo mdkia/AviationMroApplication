@@ -46,6 +46,13 @@ public class SecurityConfig {
             "/api/repair/schedules/**"
     };
 
+    // اضافه کردن دسترسی‌های جدید برای ماژول Sales
+    private static final String[] SALES_ENDPOINTS = {
+            "/api/sales/customers/**",
+            "/api/sales/quotations/**",
+            "/api/sales/orders/**",
+            "/api/sales/invoices/**"
+    };
     public SecurityConfig(JwtTokenProvider tokenProvider, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.userRepository = userRepository;
@@ -82,8 +89,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/accounting/**").hasAnyRole("ADMIN", "ACCOUNTANT")
 
                         // Repair endpoints - Technicians and above
-                        .requestMatchers(REPAIR_ENDPOINTS).hasAnyRole(
-                                "TECHNICIAN", "INSPECTOR", "WAREHOUSE_MANAGER", "ADMIN")
+                        .requestMatchers(REPAIR_ENDPOINTS).hasAnyRole("TECHNICIAN", "INSPECTOR", "WAREHOUSE_MANAGER", "ADMIN")
+
+                        // Sales endpoints - Sales Managers and above
+                        .requestMatchers(SALES_ENDPOINTS).hasAnyRole("SALES_MANAGER", "ACCOUNTANT", "ADMIN")
+
                         .anyRequest().authenticated()
                 )
                /* .addFilterBefore(new JwtAuthenticationFilter(tokenProvider),
