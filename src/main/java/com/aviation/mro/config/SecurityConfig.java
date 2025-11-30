@@ -53,6 +53,15 @@ public class SecurityConfig {
             "/api/sales/orders/**",
             "/api/sales/invoices/**"
     };
+
+    // اضافه کردن دسترسی‌های جدید برای ماژول Accounting
+    private static final String[] ACCOUNTING_ENDPOINTS = {
+            "/api/accounting/accounts/**",
+            "/api/accounting/journal-entries/**",
+            "/api/accounting/trial-balance/**",
+            "/api/accounting/financial-reports/**"
+    };
+
     public SecurityConfig(JwtTokenProvider tokenProvider, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.userRepository = userRepository;
@@ -93,6 +102,9 @@ public class SecurityConfig {
 
                         // Sales endpoints - Sales Managers and above
                         .requestMatchers(SALES_ENDPOINTS).hasAnyRole("SALES_MANAGER", "ACCOUNTANT", "ADMIN")
+
+                        // Accounting endpoints - Accountants and above
+                        .requestMatchers(ACCOUNTING_ENDPOINTS).hasAnyRole("ACCOUNTANT", "ADMIN")
 
                         .anyRequest().authenticated()
                 )
