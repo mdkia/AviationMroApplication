@@ -62,6 +62,12 @@ public class SecurityConfig {
             "/api/accounting/financial-reports/**"
     };
 
+    // اضافه کردن دسترسی‌های جدید برای ماژول Quality
+    private static final String[] QUALITY_ENDPOINTS = {
+            "/api/quality/inspection-plans/**",
+            "/api/quality/inspections/**",
+            "/api/quality/non-conformances/**"
+    };
     public SecurityConfig(JwtTokenProvider tokenProvider, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.userRepository = userRepository;
@@ -78,18 +84,17 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // مدیریت قطعات
-                        .requestMatchers(HttpMethod.GET, "/api/parts/**").hasAnyRole(
-                                "ADMIN", "TECHNICIAN", "INSPECTOR", "WAREHOUSE_MANAGER",
-                                "SALES_MANAGER", "ACCOUNTANT", "READ_ONLY")
-                        .requestMatchers(HttpMethod.POST, "/api/parts/**").hasAnyRole(
-                                "ADMIN", "TECHNICIAN")
-                        .requestMatchers(HttpMethod.PUT, "/api/parts/**").hasAnyRole(
-                                "ADMIN", "TECHNICIAN", "INSPECTOR")
+                        .requestMatchers(HttpMethod.GET, "/api/parts/**").hasAnyRole("ADMIN", "TECHNICIAN", "INSPECTOR",
+                                "WAREHOUSE_MANAGER", "SALES_MANAGER", "ACCOUNTANT", "READ_ONLY")
+
+                        .requestMatchers(HttpMethod.POST, "/api/parts/**").hasAnyRole("ADMIN", "TECHNICIAN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/parts/**").hasAnyRole("ADMIN", "TECHNICIAN", "INSPECTOR")
+
                         .requestMatchers(HttpMethod.DELETE, "/api/parts/**").hasRole("ADMIN")
 
                         // Warehouse (بعداً کامل می‌شود)
-                        .requestMatchers("/api/warehouse/**").hasAnyRole(
-                                "ADMIN", "WAREHOUSE_MANAGER", "TECHNICIAN", "INSPECTOR")
+                        .requestMatchers("/api/warehouse/**").hasAnyRole("ADMIN", "WAREHOUSE_MANAGER", "TECHNICIAN", "INSPECTOR")
 
                         // Sales (بعداً کامل می‌شود)
                         .requestMatchers("/api/sales/**").hasAnyRole("ADMIN", "SALES_MANAGER")
@@ -105,6 +110,9 @@ public class SecurityConfig {
 
                         // Accounting endpoints - Accountants and above
                         .requestMatchers(ACCOUNTING_ENDPOINTS).hasAnyRole("ACCOUNTANT", "ADMIN")
+
+                        // Quality endpoints - Inspectors and above
+                        .requestMatchers(QUALITY_ENDPOINTS).hasAnyRole("INSPECTOR", "TECHNICIAN", "ADMIN")
 
                         .anyRequest().authenticated()
                 )
