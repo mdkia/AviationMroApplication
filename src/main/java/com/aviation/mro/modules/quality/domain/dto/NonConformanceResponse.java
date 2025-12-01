@@ -1,8 +1,10 @@
+// modules/quality/domain/dto/NonConformanceResponse.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import com.aviation.mro.modules.quality.domain.enums.NCRStatus;
 import com.aviation.mro.modules.quality.domain.enums.CorrectiveActionStatus;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data

@@ -1,3 +1,4 @@
+// modules/quality/domain/dto/DefectRequest.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import com.aviation.mro.modules.quality.domain.enums.ComplianceStatus;

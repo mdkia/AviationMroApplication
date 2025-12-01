@@ -1,11 +1,11 @@
 package com.aviation.mro.modules.quality.repository;
-
 import com.aviation.mro.modules.quality.domain.model.Defect;
 import com.aviation.mro.modules.quality.domain.enums.ComplianceStatus;
 import com.aviation.mro.modules.quality.domain.enums.DefectSeverity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository

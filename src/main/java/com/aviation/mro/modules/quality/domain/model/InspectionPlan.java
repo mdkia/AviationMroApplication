@@ -1,10 +1,12 @@
 package com.aviation.mro.modules.quality.domain.model;
 
+
 import com.aviation.mro.modules.quality.domain.enums.InspectionType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

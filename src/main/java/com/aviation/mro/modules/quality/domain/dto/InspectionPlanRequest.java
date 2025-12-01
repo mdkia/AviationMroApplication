@@ -4,6 +4,7 @@ import com.aviation.mro.modules.quality.domain.enums.InspectionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 

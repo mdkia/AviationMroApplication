@@ -1,3 +1,4 @@
+// modules/quality/service/RepairIntegrationService.java
 package com.aviation.mro.modules.quality.service;
 
 import com.aviation.mro.modules.quality.domain.model.Inspection;
@@ -11,9 +12,9 @@ import com.aviation.mro.modules.repair.repository.WorkOrderRepository;
 import com.aviation.mro.modules.auth.model.User;
 import com.aviation.mro.modules.auth.repository.UserRepository;
 import com.aviation.mro.modules.parts.domain.model.AircraftPart;
-import com.aviation.mro.modules.parts.repository.AircraftPartRepository;
-import com.aviation.mro.modules.parts.domain.enums.ServiceabilityStatus;
 import com.aviation.mro.modules.parts.domain.enums.LocationStatus;
+import com.aviation.mro.modules.parts.domain.enums.ServiceabilityStatus;
+import com.aviation.mro.modules.parts.repository.AircraftPartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -56,7 +57,7 @@ public class RepairIntegrationService {
             throw new IllegalStateException("No available technician found for repair work order");
         }
 
-        // Get the current user
+        // Get the current user (creator)
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
@@ -69,35 +70,34 @@ public class RepairIntegrationService {
         workOrder.setPriority(determineRepairPriority(inspection));
         workOrder.setMaintenanceType(determineMaintenanceType(inspection));
 
-        // Set aircraft information - استفاده از اطلاعات موجود
+        // aircraft fields: for component repairs we set a generic value
         workOrder.setAircraftRegistration("N/A - Component Repair");
+        workOrder.setAircraftType("Component");
+        workOrder.setTailNumber(null);
 
-        // استفاده از partName به جای aircraftType که وجود ندارد
-        String aircraftType = inspection.getPart().getPartName() != null ?
-                inspection.getPart().getPartName() : "Generic Aircraft Component";
-        workOrder.setAircraftType(aircraftType);
-
-        // Set dates
+        // Dates & cost
         workOrder.setEstimatedStartDate(LocalDateTime.now().plusDays(1));
         workOrder.setEstimatedCompletionDate(LocalDateTime.now().plusDays(7));
         workOrder.setEstimatedCost(calculateEstimatedRepairCost(inspection));
 
-        // Assign personnel
+        // Assign personnel and audit
         workOrder.setAssignedTechnician(assignedTechnician);
         workOrder.setCreatedBy(currentUser);
-        workOrder.setCreatedByUser(username);
+        workOrder.setCreatedByUser(username != null ? username : (currentUser.getUsername()));
 
-        // Link to the part that needs repair
+        // Link required parts (WorkOrder.requiredParts is initialized in entity)
         AircraftPart part = inspection.getPart();
-        workOrder.getRequiredParts().add(part);
+        if (part != null) {
+            workOrder.getRequiredParts().add(part);
+        }
 
         WorkOrder savedWorkOrder = workOrderRepository.save(workOrder);
 
-        // Update part status to indicate it's in repair
+        // Update the part status (persist change)
         updatePartStatusForRepair(part);
 
         log.info("Repair work order created: {} for inspection: {} by user: {}",
-                workOrderNumber, inspection.getInspectionNumber(), username);
+                workOrderNumber, safeInspectionNumber(inspection), username);
 
         return savedWorkOrder;
     }
@@ -110,38 +110,47 @@ public class RepairIntegrationService {
     }
 
     private String generateWorkOrderTitle(Inspection inspection) {
-        String partInfo = inspection.getPart().getPartNumber() != null ?
+        String partInfo = (inspection.getPart() != null && inspection.getPart().getPartNumber() != null) ?
                 inspection.getPart().getPartNumber() : "Part";
-        return "Corrective Repair - " + partInfo + " - " + inspection.getInspectionNumber();
+        return "Corrective Repair - " + partInfo + " - " + safeInspectionNumber(inspection);
+    }
+
+    private String safeInspectionNumber(Inspection inspection) {
+        try {
+            return inspection.getInspectionNumber() != null ? inspection.getInspectionNumber() : "UNKNOWN_INS";
+        } catch (Exception e) {
+            return "UNKNOWN_INS";
+        }
     }
 
     private String generateWorkOrderDescription(Inspection inspection) {
         StringBuilder description = new StringBuilder();
-        description.append("Repair required based on failed inspection: ").append(inspection.getInspectionNumber()).append("\n");
+        description.append("Repair required based on failed inspection: ").append(safeInspectionNumber(inspection)).append("\n");
 
-        if (inspection.getFindings() != null) {
+        if (inspection.getFindings() != null && !inspection.getFindings().isBlank()) {
             description.append("Findings: ").append(inspection.getFindings()).append("\n");
         }
 
-        if (inspection.getRecommendations() != null) {
+        if (inspection.getRecommendations() != null && !inspection.getRecommendations().isBlank()) {
             description.append("Recommendations: ").append(inspection.getRecommendations()).append("\n");
         }
 
-        // استفاده از متد getDefectSummary که در کلاس Inspection وجود دارد
-        description.append("\nDefect Summary: ").append(inspection.getDefectSummary()).append("\n");
-
-        // Add detailed defect information
+        // Add defect summary
         if (inspection.getDefects() != null && !inspection.getDefects().isEmpty()) {
-            description.append("\nDetailed Defects:\n");
+            description.append("\nDefect Summary:\n");
             inspection.getDefects().stream()
+                    .filter(Objects::nonNull)
                     .filter(defect -> defect.getComplianceStatus() == ComplianceStatus.NON_COMPLIANT)
                     .forEach(defect -> {
-                        description.append("- ").append(defect.getQualityCheck().getDescription());
+                        String qDesc = "Quality check";
+                        try {
+                            if (defect.getQualityCheck() != null && defect.getQualityCheck().getDescription() != null) {
+                                qDesc = defect.getQualityCheck().getDescription();
+                            }
+                        } catch (Exception ignored) {}
+                        description.append("- ").append(qDesc);
                         if (defect.getSeverity() != null) {
                             description.append(" (").append(defect.getSeverity()).append(")");
-                        }
-                        if (defect.getDeviation() != null) {
-                            description.append(" - Deviation: ").append(defect.getDeviation());
                         }
                         description.append("\n");
                     });
@@ -151,10 +160,21 @@ public class RepairIntegrationService {
     }
 
     private RepairPriority determineRepairPriority(Inspection inspection) {
-        // استفاده از متدهای جدید hasCriticalDefects و hasMajorDefects که در Inspection وجود دارند
-        if (inspection.hasCriticalDefects()) {
+        if (inspection.getDefects() == null || inspection.getDefects().isEmpty()) {
+            return RepairPriority.MEDIUM;
+        }
+
+        boolean hasCritical = inspection.getDefects().stream()
+                .filter(Objects::nonNull)
+                .anyMatch(defect -> defect.getSeverity() == DefectSeverity.CRITICAL);
+
+        boolean hasMajor = inspection.getDefects().stream()
+                .filter(Objects::nonNull)
+                .anyMatch(defect -> defect.getSeverity() == DefectSeverity.MAJOR);
+
+        if (hasCritical) {
             return RepairPriority.CRITICAL;
-        } else if (inspection.hasMajorDefects()) {
+        } else if (hasMajor) {
             return RepairPriority.HIGH;
         } else {
             return RepairPriority.MEDIUM;
@@ -162,81 +182,81 @@ public class RepairIntegrationService {
     }
 
     private MaintenanceType determineMaintenanceType(Inspection inspection) {
-        // منطق ساده برای تعیین نوع تعمیر بر اساس قطعه و نقص‌ها
-        if (inspection.getPart().getPartNumber() != null &&
-                inspection.getPart().getPartNumber().toUpperCase().contains("ENG")) {
-            return MaintenanceType.ENGINE_REPAIR;
-        } else if (inspection.getDefects() != null &&
-                inspection.getDefects().stream().anyMatch(defect ->
-                        defect.getQualityCheck().getDescription().toLowerCase().contains("structural"))) {
-            return MaintenanceType.STRUCTURAL_REPAIR;
-        } else {
-            return MaintenanceType.COMPONENT_OVERHAUL;
+        // Simple heuristics: if part number contains ENG => engine repair; structural keyword in QC => structural repair
+        try {
+            if (inspection.getPart() != null && inspection.getPart().getPartNumber() != null &&
+                    inspection.getPart().getPartNumber().toUpperCase().contains("ENG")) {
+                return MaintenanceType.ENGINE_REPAIR;
+            }
+        } catch (Exception ignored) {}
+
+        if (inspection.getDefects() != null) {
+            boolean structural = inspection.getDefects().stream()
+                    .filter(Objects::nonNull)
+                    .anyMatch(defect -> {
+                        try {
+                            return defect.getQualityCheck() != null &&
+                                    defect.getQualityCheck().getDescription() != null &&
+                                    defect.getQualityCheck().getDescription().toLowerCase().contains("structural");
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    });
+            if (structural) return MaintenanceType.STRUCTURAL_REPAIR;
         }
+
+        return MaintenanceType.COMPONENT_OVERHAUL;
     }
 
     private Double calculateEstimatedRepairCost(Inspection inspection) {
-        // محاسبه هزینه پایه
-        double baseCost = 500.0; // هزینه پایه پیش‌فرض
+        double baseCost = 500.0; // Default base cost
 
-        // تنظیم بر اساس شدت نقص
         if (inspection.getDefects() != null) {
             long criticalDefects = inspection.getDefects().stream()
-                    .filter(defect -> defect.getSeverity() == DefectSeverity.CRITICAL)
+                    .filter(d -> d != null && d.getSeverity() == DefectSeverity.CRITICAL)
                     .count();
 
             long majorDefects = inspection.getDefects().stream()
-                    .filter(defect -> defect.getSeverity() == DefectSeverity.MAJOR)
+                    .filter(d -> d != null && d.getSeverity() == DefectSeverity.MAJOR)
                     .count();
 
-            // ضرایب هزینه
-            baseCost += (criticalDefects * 1000.0); // 1000 دلار برای هر نقص بحرانی
-            baseCost += (majorDefects * 500.0);     // 500 دلار برای هر نقص اصلی
+            baseCost += (criticalDefects * 1000.0); // $1000 per critical defect
+            baseCost += (majorDefects * 500.0);     // $500 per major defect
         }
 
-        // در مدل AircraftPart فیلد هزینه وجود ندارد، بنابراین از هزینه ثابت استفاده می‌کنیم
-        // اگر نیاز به هزینه بود، می‌توان از منطق جایگزین استفاده کرد
-        baseCost = Math.max(baseCost, 300.0); // حداقل هزینه 300 دلار
+        // No unit cost available in AircraftPart model -> skip part-cost-based adjustment
 
         return baseCost;
     }
 
     private User findAvailableTechnician() {
-        // دریافت تمام کاربران
         List<User> allUsers = userRepository.findAll();
 
-        // پیدا کردن کاربران با نقش TECHNICIAN
         return allUsers.stream()
-                .filter(user -> {
-                    // بررسی وضعیت فعال بودن کاربر - استفاده از isEnabled()
-                    return user.isEnabled() && !user.isDeleted();
-                })
-                .filter(user -> {
-                    // بررسی اینکه کاربر نقش TECHNICIAN دارد
-                    // با توجه به ساختار واقعی مدل User - نقش‌ها به صورت String هستند
-                    Set<String> roles = user.getRoles();
-                    if (roles == null || roles.isEmpty()) {
-                        return false;
-                    }
-
-                    // بررسی بر اساس نام نقش (String)
-                    return roles.stream()
-                            .anyMatch(role -> "TECHNICIAN".equalsIgnoreCase(role));
-                })
+                .filter(Objects::nonNull)
+                .filter(User::isEnabled) // matches your User model (enabled boolean)
+                .filter(u -> u.getRoles() != null && u.getRoles().contains("TECHNICIAN"))
                 .findFirst()
-                .orElse(null); // برگرداندن null اگر تکنسینی پیدا نشد
+                .orElse(null);
     }
 
     private void updatePartStatusForRepair(AircraftPart part) {
-        // به‌روزرسانی وضعیت قطعه برای نشان دادن اینکه در تعمیر است
-        part.setServiceabilityStatus(ServiceabilityStatus.UNSERVICEABLE_REPAIRABLE);
-        part.setLocationStatus(LocationStatus.IN_REPAIR_SHOP);
+        if (part == null) return;
+
+        try {
+            part.setServiceabilityStatus(ServiceabilityStatus.UNSERVICEABLE_REPAIRABLE);
+        } catch (Exception ignored) {}
+
+        try {
+            part.setLocationStatus(LocationStatus.IN_REPAIR_SHOP);
+        } catch (Exception ignored) {}
+
         aircraftPartRepository.save(part);
 
         log.debug("Part status updated for repair: {}", part.getPartNumber());
     }
 
-    // متد اضافی برای ایجاد دستی سفارش کار تعمیر
+    // Manual repair order creation
     @Transactional
     public WorkOrder createManualRepairOrder(Long partId, String description, RepairPriority priority, String username) {
         AircraftPart part = aircraftPartRepository.findById(partId)
@@ -259,51 +279,30 @@ public class RepairIntegrationService {
         workOrder.setStatus(WorkOrderStatus.PENDING_APPROVAL);
         workOrder.setPriority(priority);
         workOrder.setMaintenanceType(MaintenanceType.COMPONENT_OVERHAUL);
+
         workOrder.setAircraftRegistration("N/A - Component Repair");
-        workOrder.setAircraftType(part.getPartName() != null ? part.getPartName() : "Generic Aircraft Component");
+        workOrder.setAircraftType("Component");
         workOrder.setEstimatedStartDate(LocalDateTime.now().plusDays(1));
         workOrder.setEstimatedCompletionDate(LocalDateTime.now().plusDays(7));
-        workOrder.setEstimatedCost(500.0); // هزینه پیش‌فرض برای تعمیر دستی
+        workOrder.setEstimatedCost(500.0); // Default cost for manual repair
+
         workOrder.setAssignedTechnician(technician);
         workOrder.setCreatedBy(currentUser);
-        workOrder.setCreatedByUser(username);
+        workOrder.setCreatedByUser(username != null ? username : currentUser.getUsername());
+
+        // Ensure parts list initialized and add
+        if (workOrder.getRequiredParts() == null) {
+            // WorkOrder entity initializes this already, but defensive programming:
+            workOrder.setRequiredParts(new java.util.ArrayList<>());
+        }
         workOrder.getRequiredParts().add(part);
 
-        WorkOrder savedWorkOrder = workOrderRepository.save(workOrder);
+        WorkOrder saved = workOrderRepository.save(workOrder);
         updatePartStatusForRepair(part);
 
         log.info("Manual repair work order created: {} for part: {} by user: {}",
                 workOrderNumber, part.getPartNumber(), username);
 
-        return savedWorkOrder;
-    }
-
-    // متد کمکی برای بررسی در دسترس بودن تکنسین‌ها
-    public boolean hasAvailableTechnicians() {
-        return findAvailableTechnician() != null;
-    }
-
-    // متد برای دریافت لیست تمام تکنسین‌های موجود
-    public List<User> getAllAvailableTechnicians() {
-        List<User> allUsers = userRepository.findAll();
-
-        return allUsers.stream()
-                .filter(user -> user.isEnabled() && !user.isDeleted())
-                .filter(user -> {
-                    Set<String> roles = user.getRoles();
-                    if (roles == null || roles.isEmpty()) {
-                        return false;
-                    }
-                    return roles.stream()
-                            .anyMatch(role -> "TECHNICIAN".equalsIgnoreCase(role));
-                })
-                .toList();
-    }
-
-    // متد برای بررسی اینکه آیا بازرسی نیاز به تعمیر دارد
-    public boolean inspectionRequiresRepair(Inspection inspection) {
-        return inspection != null &&
-                inspection.requiresRepair() &&
-                inspection.getPart() != null;
+        return saved;
     }
 }

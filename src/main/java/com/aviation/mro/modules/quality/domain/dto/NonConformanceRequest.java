@@ -1,9 +1,11 @@
+// modules/quality/domain/dto/NonConformanceRequest.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import com.aviation.mro.modules.quality.domain.enums.NCRStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data

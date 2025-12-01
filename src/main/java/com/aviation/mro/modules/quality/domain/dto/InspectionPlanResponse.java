@@ -1,7 +1,9 @@
+// modules/quality/domain/dto/InspectionPlanResponse.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import com.aviation.mro.modules.quality.domain.enums.InspectionType;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

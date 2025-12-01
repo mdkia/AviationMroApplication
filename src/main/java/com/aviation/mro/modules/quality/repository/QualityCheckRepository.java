@@ -3,6 +3,7 @@ package com.aviation.mro.modules.quality.repository;
 import com.aviation.mro.modules.quality.domain.model.QualityCheck;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository

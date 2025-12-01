@@ -1,7 +1,9 @@
+// modules/quality/domain/dto/InspectionRequest.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

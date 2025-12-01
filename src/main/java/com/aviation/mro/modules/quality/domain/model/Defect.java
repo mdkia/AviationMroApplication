@@ -1,5 +1,6 @@
 package com.aviation.mro.modules.quality.domain.model;
 
+
 import com.aviation.mro.modules.quality.domain.enums.DefectSeverity;
 import com.aviation.mro.modules.quality.domain.enums.ComplianceStatus;
 import jakarta.persistence.*;

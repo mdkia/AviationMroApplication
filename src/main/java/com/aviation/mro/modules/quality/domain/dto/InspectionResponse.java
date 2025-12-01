@@ -1,9 +1,11 @@
+// modules/quality/domain/dto/InspectionResponse.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import com.aviation.mro.modules.quality.domain.enums.DefectSeverity;
 import com.aviation.mro.modules.quality.domain.enums.InspectionStatus;
 import com.aviation.mro.modules.quality.domain.enums.ComplianceStatus;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

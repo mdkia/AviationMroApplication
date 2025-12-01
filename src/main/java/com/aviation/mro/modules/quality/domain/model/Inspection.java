@@ -1,15 +1,18 @@
 package com.aviation.mro.modules.quality.domain.model;
 
+
 import com.aviation.mro.modules.quality.domain.enums.DefectSeverity;
 import com.aviation.mro.modules.quality.domain.enums.InspectionStatus;
 import com.aviation.mro.modules.quality.domain.enums.ComplianceStatus;
 import com.aviation.mro.modules.auth.model.User;
 import com.aviation.mro.modules.parts.domain.model.AircraftPart;
+import com.aviation.mro.modules.repair.domain.enums.RepairPriority;
 import com.aviation.mro.modules.repair.domain.model.WorkOrder;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,49 +98,33 @@ public class Inspection {
                         ComplianceStatus.NON_COMPLIANT;
     }
 
-    // Helper methods for repair integration
+    // Helper method to check if repair is needed
     public boolean requiresRepair() {
         return this.complianceStatus == ComplianceStatus.NON_COMPLIANT &&
-                this.part != null &&
-                this.status == InspectionStatus.COMPLETED;
+                this.part != null;
     }
 
-    public boolean hasCriticalDefects() {
+    // Helper method to get repair priority based on defects
+    public RepairPriority getSuggestedRepairPriority() {
         if (this.defects == null || this.defects.isEmpty()) {
-            return false;
+            return RepairPriority.LOW;
         }
 
-        return this.defects.stream()
+        boolean hasCritical = this.defects.stream()
                 .anyMatch(defect -> defect.getSeverity() == DefectSeverity.CRITICAL);
-    }
 
-    public boolean hasMajorDefects() {
-        if (this.defects == null || this.defects.isEmpty()) {
-            return false;
-        }
-
-        return this.defects.stream()
+        boolean hasMajor = this.defects.stream()
                 .anyMatch(defect -> defect.getSeverity() == DefectSeverity.MAJOR);
-    }
 
-    public String getDefectSummary() {
-        if (this.defects == null || this.defects.isEmpty()) {
-            return "No defects found";
+        if (hasCritical) {
+            return RepairPriority.CRITICAL;
+        } else if (hasMajor) {
+            return RepairPriority.HIGH;
+        } else {
+            return RepairPriority.MEDIUM;
         }
-
-        long criticalCount = this.defects.stream()
-                .filter(defect -> defect.getSeverity() == DefectSeverity.CRITICAL)
-                .count();
-
-        long majorCount = this.defects.stream()
-                .filter(defect -> defect.getSeverity() == DefectSeverity.MAJOR)
-                .count();
-
-        long minorCount = this.defects.stream()
-                .filter(defect -> defect.getSeverity() == DefectSeverity.MINOR)
-                .count();
-
-        return String.format("Defects: %d critical, %d major, %d minor",
-                criticalCount, majorCount, minorCount);
     }
+
+
+
 }
