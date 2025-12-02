@@ -68,6 +68,14 @@ public class SecurityConfig {
             "/api/quality/inspections/**",
             "/api/quality/non-conformances/**"
     };
+
+    private static final String[] REPORT_ENDPOINTS = {
+            "/api/reports/**"
+    };
+
+    private static final String[] NOTIFICATION_ENDPOINTS = {
+            "/api/notifications/**"
+    };
     public SecurityConfig(JwtTokenProvider tokenProvider, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.userRepository = userRepository;
@@ -113,6 +121,11 @@ public class SecurityConfig {
 
                         // Quality endpoints - Inspectors and above
                         .requestMatchers(QUALITY_ENDPOINTS).hasAnyRole("INSPECTOR", "TECHNICIAN", "ADMIN")
+
+                        .requestMatchers(NOTIFICATION_ENDPOINTS).authenticated()
+
+                        .requestMatchers(REPORT_ENDPOINTS)
+                        .hasAnyRole("ADMIN", "SALES_MANAGER", "ACCOUNTANT", "WAREHOUSE_MANAGER", "INSPECTOR")
 
                         .anyRequest().authenticated()
                 )

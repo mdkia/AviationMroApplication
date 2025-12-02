@@ -44,4 +44,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // اضافه کردن این متد برای فیلتر JWT
     Optional<User> findByUsernameAndDeletedFalse(String username);
+
+//    @Query("SELECT u.id FROM User u WHERE u.roles IN :roles")
+//    List<Long> findUserIdsByRoleIn(@Param("roles") List<String> roles);
+
+    @Query("SELECT DISTINCT u.id FROM User u JOIN u.roles r WHERE r IN :roles")
+    List<Long> findUserIdsByRoleIn(@Param("roles") List<String> roles);
 }

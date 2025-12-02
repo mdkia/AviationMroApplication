@@ -9,5 +9,5 @@ public enum WorkOrderStatus {
     AWAITING_INSPECTION,
     COMPLETED,
     CANCELLED,
-    ON_HOLD
+    ON_HOLD,CLOSED
 }

@@ -5,5 +5,6 @@ public enum CorrectiveActionStatus {
     IN_PROGRESS,
     COMPLETED,
     VERIFIED,
+    REJECTED,
     NOT_EFFECTIVE
 }
