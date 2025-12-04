@@ -63,24 +63,9 @@ public class SecurityUtils {
         return authentication.getName();
     }
 
-    // متد اضافی برای گرفتن خود User object
     public static User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
-        }
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof User) {
-            return (User) principal;
-        }
-
-        return null;
-    }
-
-    public static User getCurrentUser(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }

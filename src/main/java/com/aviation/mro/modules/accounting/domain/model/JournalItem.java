@@ -2,6 +2,7 @@ package com.aviation.mro.modules.accounting.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Nationalized;
 
 @Data
 @Entity
@@ -23,7 +24,9 @@ public class JournalItem {
     private Double debitAmount = 0.0;
     private Double creditAmount = 0.0;
 
+    @Nationalized
     private String description;
+    @Nationalized
     private String reference;
 
     // برای ردیابی دقیق‌تر

@@ -7,6 +7,7 @@ import com.aviation.mro.modules.auth.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String invoiceNumber; // Format: INV-YYYY-MM-001
 

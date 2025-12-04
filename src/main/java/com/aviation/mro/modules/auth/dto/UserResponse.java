@@ -1,8 +1,20 @@
 package com.aviation.mro.modules.auth.dto;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import com.aviation.mro.modules.auth.model.Permission;
+import com.aviation.mro.modules.auth.model.Role;
+import com.aviation.mro.modules.auth.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
     private Long id;
     private String username;
@@ -13,58 +25,38 @@ public class UserResponse {
     private boolean deleted;
     private LocalDateTime deletedAt;
     private String deletedBy;
-    private Set<String> roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Constructors
-    public UserResponse() {}
+    // انتخاب کنید: Set<RoleDTO> یا Set<String>
+    private Set<RoleDTO> roles = new HashSet<>();
+    private Set<String> permissions = new HashSet<>();
 
-    public UserResponse(Long id, String username, String email, String firstName,
-                        String lastName, boolean enabled, Set<String> roles) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.enabled = enabled;
-        this.roles = roles;
+    // Constructor از Entity User
+    public UserResponse(User user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.enabled = user.isEnabled();
+        this.deleted = user.isDeleted();
+        this.deletedAt = user.getDeletedAt();
+        this.deletedBy = user.getDeletedBy();
+        this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
+
+        if (user.getRoles() != null) {
+            // اگر Set<RoleDTO> دارید
+            this.roles = user.getRoles().stream()
+                    .map(RoleDTO::new)
+                    .collect(Collectors.toSet());
+
+            // جمع‌آوری تمام permissionها
+            this.permissions = user.getRoles().stream()
+                    .flatMap(role -> role.getPermissions().stream())
+                    .map(Permission::getName)
+                    .collect(Collectors.toSet());
+        }
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
-
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
-
-    public boolean isEnabled() { return enabled; }
-    public void setEnabled(boolean enabled) { this.enabled = enabled; }
-
-    public boolean isDeleted() { return deleted; }
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
-
-    public LocalDateTime getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
-
-    public String getDeletedBy() { return deletedBy; }
-    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
-
-    public Set<String> getRoles() { return roles; }
-    public void setRoles(Set<String> roles) { this.roles = roles; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

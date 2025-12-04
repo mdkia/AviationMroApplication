@@ -5,6 +5,7 @@ import com.aviation.mro.modules.accounting.domain.enums.AccountCategory;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
@@ -17,12 +18,15 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Nationalized
+    @Column(unique = true, nullable = false,length = 100)
     private String accountCode; // فرمت: 1010, 1020, etc.
 
+    @Nationalized
     @Column(nullable = false)
     private String accountName;
 
+    @Nationalized
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -60,7 +64,9 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Nationalized
     private String createdBy;
+    @Nationalized
     private String updatedBy;
 
     // Helper methods

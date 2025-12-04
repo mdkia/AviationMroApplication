@@ -51,12 +51,12 @@ public class NotificationService {
         userNotificationRepository.saveAll(links);
     }
 
-    // مثال آماده برای استفاده در ماژول Quality
-    public void notifyNewNonConformance(String ncCode, String severity, Long ncId) {
-        List<Long> recipients = userRepository.findUserIdsByRoleIn(List.of("INSPECTOR", "ADMIN"));
-        sendToUsers(recipients,
-                "عدم انطباق جدید گزارش شد",
-                "کد: " + ncCode + " | شدت: " + severity,
-                "ERROR", "URGENT", "NON_CONFORMANCE", ncId);
-    }
+//    // مثال آماده برای استفاده در ماژول Quality
+//    public void notifyNewNonConformance(String ncCode, String severity, Long ncId) {
+//        List<Long> recipients = userRepository.findUserIdsByRoleIn(List.of("INSPECTOR", "ADMIN"));
+//        sendToUsers(recipients,
+//                "عدم انطباق جدید گزارش شد",
+//                "کد: " + ncCode + " | شدت: " + severity,
+//                "ERROR", "URGENT", "NON_CONFORMANCE", ncId);
+//    }
 }

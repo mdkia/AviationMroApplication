@@ -5,6 +5,7 @@ import com.aviation.mro.modules.quality.domain.enums.DefectSeverity;
 import com.aviation.mro.modules.quality.domain.enums.ComplianceStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Nationalized;
 
 @Data
 @Entity
@@ -30,11 +31,19 @@ public class Defect {
     @Enumerated(EnumType.STRING)
     private DefectSeverity severity;
 
+    @Nationalized
     private String actualValue; // مقدار اندازه‌گیری شده
+
+    @Nationalized
     private String deviation; // انحراف از استاندارد
+
+    @Nationalized
     private String notes;
 
     // تصاویر/مستندات
+    @Nationalized
     private String evidencePhotos;
+
+    @Nationalized
     private String supportingDocuments;
 }

@@ -11,6 +11,7 @@ import com.aviation.mro.modules.repair.domain.model.WorkOrder;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class Inspection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String inspectionNumber; // INS-2024-001
 
@@ -64,7 +66,10 @@ public class Inspection {
     private Integer failedChecks;
     private Double complianceRate; // درصد تطابق
 
+    @Nationalized
     private String findings;
+
+    @Nationalized
     private String recommendations;
 
     // Relationships
@@ -81,7 +86,10 @@ public class Inspection {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Nationalized
     private String createdBy;
+
+    @Nationalized
     private String updatedBy;
 
     // Helper methods
@@ -124,7 +132,4 @@ public class Inspection {
             return RepairPriority.MEDIUM;
         }
     }
-
-
-
 }

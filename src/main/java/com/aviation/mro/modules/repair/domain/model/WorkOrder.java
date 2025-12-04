@@ -7,6 +7,7 @@ import com.aviation.mro.modules.parts.domain.model.AircraftPart;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -22,12 +23,15 @@ public class WorkOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String workOrderNumber; // Format: WO-YYYY-MM-001
 
+    @Nationalized
     @Column(nullable = false)
     private String title;
 
+    @Nationalized
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -43,8 +47,11 @@ public class WorkOrder {
     private MaintenanceType maintenanceType;
 
     // Aircraft Information
+    @Nationalized
     private String aircraftRegistration;
+    @Nationalized
     private String aircraftType;
+    @Nationalized
     private String tailNumber;
 
     // Dates
@@ -88,7 +95,10 @@ public class WorkOrder {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Nationalized
     private String createdByUser;
+
+    @Nationalized
     private String updatedByUser;
 
     // Helper methods

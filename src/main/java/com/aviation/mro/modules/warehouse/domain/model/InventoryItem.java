@@ -4,6 +4,8 @@ import com.aviation.mro.modules.parts.domain.model.AircraftPart;
 import com.aviation.mro.modules.warehouse.domain.enums.ApprovalStatus;
 import com.aviation.mro.modules.warehouse.domain.enums.InventoryStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Nationalized;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -32,13 +34,17 @@ public class InventoryItem {
     private LocalDate receiptDate; // تاریخ دریافت
     private LocalDate expirationDate; // تاریخ انقضا (برای قطعات با Shelf Life)
 
+    @Nationalized
     private String batchNumber;
+
+    @Nationalized
     private String supplierInfo;
 
     @Enumerated(EnumType.STRING)
     private InventoryStatus status = InventoryStatus.ACTIVE;
 
     private LocalDateTime lastCountDate; // تاریخ آخرین شمارش
+    @Nationalized
     private String lastCountBy;
 
     private LocalDateTime createdAt;
@@ -48,11 +54,14 @@ public class InventoryItem {
     // 🔐 فیلدهای جدید برای سیستم تأیید
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus = ApprovalStatus.NOT_REQUIRED;
-
+    @Nationalized
     private String lastRequestedBy;      // آخرین درخواست دهنده
+
+    @Nationalized
     private String lastApprovedBy;       // آخرین تأیید کننده
     private LocalDateTime lastRequestDate;
     private LocalDateTime lastApprovalDate;
+    @Nationalized
     private String rejectionReason;      // دلیل رد درخواست
 
     // حداقل مقدار برای تأیید دو مرحله‌ای

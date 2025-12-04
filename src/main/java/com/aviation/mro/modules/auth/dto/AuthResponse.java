@@ -10,6 +10,7 @@ public class AuthResponse {
     private String email;
     private Set<String> roles;
 
+    private Set<String> permissions; // اگر نیاز دارید
     public AuthResponse() {}
     public AuthResponse(String accessToken, String username, String email, Set<String> roles) {
         this.accessToken = accessToken;

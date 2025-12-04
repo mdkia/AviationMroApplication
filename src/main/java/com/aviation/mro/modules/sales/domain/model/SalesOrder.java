@@ -5,6 +5,7 @@ import com.aviation.mro.modules.auth.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class SalesOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String orderNumber; // Format: SO-YYYY-MM-001
 
@@ -46,8 +48,13 @@ public class SalesOrder {
     private Double totalAmount;
 
     // Shipping
+    @Nationalized
     private String shippingAddress;
+
+    @Nationalized
     private String shippingMethod;
+
+    @Nationalized
     private String trackingNumber;
 
     // Relationships

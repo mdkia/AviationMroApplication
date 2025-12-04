@@ -1,7 +1,8 @@
 package com.aviation.mro.shared.security;
 
-import com.aviation.mro.modules.auth.model.User;
 import com.aviation.mro.modules.auth.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,11 +11,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,30 +38,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromToken(jwt);
 
-                // بارگذاری کاربر از دیتابیس به جای hardcode کردن
-                User user = userRepository.findByUsernameAndDeletedFalse(username)
-                        .orElseThrow(() -> new RuntimeException("User not found or deleted: " + username));
+                // ۲. authorities را از token بخوان (مهم!)
+                List<String> authoritiesFromToken = getAuthoritiesFromToken(jwt);
 
-                // بررسی فعال بودن کاربر
-                if (!user.isEnabled()) {
-                    throw new RuntimeException("User account is disabled: " + username);
-                }
-
-                // تبدیل نقش‌ها به GrantedAuthority
-                List<GrantedAuthority> authorities = user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                List<GrantedAuthority> authorities = authoritiesFromToken.stream()
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-                // ایجاد authentication با اطلاعات واقعی کاربر
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user, null, authorities);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
-            // در صورت خطا، authentication را پاک کنید
             SecurityContextHolder.clearContext();
         }
 
@@ -75,5 +66,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
-}
 
+    private List<String> getAuthoritiesFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(tokenProvider.getSigningKey()) // نیاز به getter دارید
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            // اول authorities را بخوان
+            List<String> authorities = claims.get("authorities", List.class);
+            if (authorities != null && !authorities.isEmpty()) {
+                return authorities;
+            }
+
+            // اگر authorities نبود، roles را تبدیل کن
+            List<String> roles = claims.get("roles", List.class);
+            if (roles != null) {
+                return roles; // یا roles را به authorities تبدیل کنید
+            }
+
+            return Collections.emptyList();
+
+        } catch (Exception e) {
+            logger.error("Cannot get authorities from token", e);
+            return Collections.emptyList();
+        }
+    }
+}

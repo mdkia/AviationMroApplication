@@ -7,6 +7,7 @@ import com.aviation.mro.modules.parts.domain.model.AircraftPart;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -22,12 +23,15 @@ public class RepairTask {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(nullable = false)
     private String taskCode; // MRO standard task codes
 
+    @Nationalized
     @Column(nullable = false)
     private String title;
 
+    @Nationalized
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -42,8 +46,12 @@ public class RepairTask {
     private Double actualCost;
 
     // Task specific
+    @Nationalized
     private String technicalReference; // AMM, CMM references
+
+    @Nationalized
     private String toolRequirements;
+    @Nationalized
     private String safetyPrecautions;
 
     // Dates
@@ -76,6 +84,8 @@ public class RepairTask {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Nationalized
     private String createdByUser;
+    @Nationalized
     private String updatedByUser;
 }

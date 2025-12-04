@@ -5,6 +5,7 @@ import com.aviation.mro.modules.quality.domain.enums.InspectionType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -20,12 +21,15 @@ public class InspectionPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String planNumber; // QP-2024-001
 
+    @Nationalized
     @Column(nullable = false)
     private String title;
 
+    @Nationalized
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -33,6 +37,7 @@ public class InspectionPlan {
     private InspectionType inspectionType;
 
     // استانداردهای قابل اجرا
+    @Nationalized
     private String applicableStandards; // EASA Part 145, FAA Part 145, etc.
 
     // فرکانس بازرسی
@@ -57,7 +62,10 @@ public class InspectionPlan {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Nationalized
     private String createdBy;
+
+    @Nationalized
     private String updatedBy;
 
     // Helper methods

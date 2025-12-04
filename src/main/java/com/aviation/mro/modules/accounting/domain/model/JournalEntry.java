@@ -4,7 +4,9 @@ import com.aviation.mro.modules.auth.model.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +20,20 @@ public class JournalEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String entryNumber; // فرمت: JE-YYYY-MM-001
 
     @Column(nullable = false)
     private LocalDateTime entryDate;
 
+    @Nationalized
     private String referenceNumber; // شماره مرجع (شماره فاکتور، etc.)
+
+    @Nationalized
     private String description;
+
+    @Nationalized
     private String notes;
 
     // مبالغ کل
@@ -36,6 +44,7 @@ public class JournalEntry {
     private Boolean isPosted = false; // آیا سند ثبت شده؟
     private LocalDateTime postedDate;
 
+    @Nationalized
     // منبع سند (اتوماتیک/دستی)
     private String sourceModule; // SALES, REPAIR, PURCHASE, MANUAL
 

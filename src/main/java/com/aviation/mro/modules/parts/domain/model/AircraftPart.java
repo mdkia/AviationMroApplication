@@ -1,114 +1,122 @@
 package com.aviation.mro.modules.parts.domain.model;
+
 import com.aviation.mro.modules.parts.domain.enums.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-
+import org.hibernate.annotations.Nationalized;
+import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "aircraft_parts")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = {}) // اگر روابط lazy دارید، اینجا exclude کنید
 public class AircraftPart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @NotBlank
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, columnDefinition = "NVARCHAR(255)")
     private String partNumber;
 
+    @Nationalized
     @NotBlank
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String partName;
 
+    @Nationalized
+    @Column(columnDefinition = "NVARCHAR(2000)")
     private String description;
 
+    @Nationalized
     @NotBlank
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, columnDefinition = "NVARCHAR(255)")
     private String serialNumber;
 
+    @Nationalized
     @NotBlank
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String batchNumber;
 
-    // Lifecycle status
     @Enumerated(EnumType.STRING)
-    private ServiceabilityStatus serviceabilityStatus;
+    @Column(columnDefinition = "NVARCHAR(50) DEFAULT 'SERVICEABLE'")
+    private ServiceabilityStatus serviceabilityStatus = ServiceabilityStatus.SERVICEABLE;
 
     @Enumerated(EnumType.STRING)
-    private LocationStatus locationStatus;
+    @Column(columnDefinition = "NVARCHAR(50) DEFAULT 'IN_STOCK'")
+    private LocationStatus locationStatus = LocationStatus.IN_STOCK;
 
     @Enumerated(EnumType.STRING)
-    private CertificationStatus certificationStatus;
+    @Column(columnDefinition = "NVARCHAR(50) DEFAULT 'NEEDS_CERTIFICATION'")
+    private CertificationStatus certificationStatus = CertificationStatus.NEEDS_CERTIFICATION;
 
-    @Column(name = "under_active_ad")
+    @Column(name = "under_active_ad", columnDefinition = "BIT DEFAULT 0")
     private Boolean underActiveAD = false;
+
+    @Nationalized
+    @Column(columnDefinition = "NVARCHAR(1000)")
     private String adDetails;
 
-    // Dates and usage
+    @Column(columnDefinition = "DATE")
     private LocalDate manufactureDate;
+
+    @Column(columnDefinition = "DATE")
     private LocalDate entryIntoServiceDate;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
     private Integer totalFlightHours = 0;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
     private Integer totalFlightCycles = 0;
 
+    @Column(columnDefinition = "DATETIME2")
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        if (serviceabilityStatus == null) serviceabilityStatus = ServiceabilityStatus.SERVICEABLE;
-        if (locationStatus == null) locationStatus = LocationStatus.IN_STOCK;
-        if (certificationStatus == null) certificationStatus = CertificationStatus.NEEDS_CERTIFICATION;
-    }
+    @Column(columnDefinition = "DATETIME2")
+    private LocalDateTime updatedAt;
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        // مقادیر پیش‌فرض اگر null هستند
+        if (serviceabilityStatus == null) {
+            serviceabilityStatus = ServiceabilityStatus.SERVICEABLE;
+        }
+        if (locationStatus == null) {
+            locationStatus = LocationStatus.IN_STOCK;
+        }
+        if (certificationStatus == null) {
+            certificationStatus = CertificationStatus.NEEDS_CERTIFICATION;
+        }
+        if (underActiveAD == null) {
+            underActiveAD = false;
+        }
+    }
 
-    // Constructors
-    public AircraftPart() {}
 
+    // Constructor سفارشی (اختیاری)
     public AircraftPart(String partNumber, String partName, String serialNumber, String batchNumber) {
         this.partNumber = partNumber;
         this.partName = partName;
         this.serialNumber = serialNumber;
         this.batchNumber = batchNumber;
+        this.serviceabilityStatus = ServiceabilityStatus.SERVICEABLE;
+        this.locationStatus = LocationStatus.IN_STOCK;
+        this.certificationStatus = CertificationStatus.NEEDS_CERTIFICATION;
+        this.underActiveAD = false;
+        this.totalFlightHours = 0;
+        this.totalFlightCycles = 0;
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getPartNumber() { return partNumber; }
-    public void setPartNumber(String partNumber) { this.partNumber = partNumber; }
-    public String getPartName() { return partName; }
-    public void setPartName(String partName) { this.partName = partName; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public String getSerialNumber() { return serialNumber; }
-    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
-    public String getBatchNumber() { return batchNumber; }
-    public void setBatchNumber(String batchNumber) { this.batchNumber = batchNumber; }
-    public ServiceabilityStatus getServiceabilityStatus() { return serviceabilityStatus; }
-    public void setServiceabilityStatus(ServiceabilityStatus serviceabilityStatus) { this.serviceabilityStatus = serviceabilityStatus; }
-    public LocationStatus getLocationStatus() { return locationStatus; }
-    public void setLocationStatus(LocationStatus locationStatus) { this.locationStatus = locationStatus; }
-    public CertificationStatus getCertificationStatus() { return certificationStatus; }
-    public void setCertificationStatus(CertificationStatus certificationStatus) { this.certificationStatus = certificationStatus; }
-    public Boolean getUnderActiveAD() { return underActiveAD; }
-    public void setUnderActiveAD(Boolean underActiveAD) { this.underActiveAD = underActiveAD; }
-    public String getAdDetails() { return adDetails; }
-    public void setAdDetails(String adDetails) { this.adDetails = adDetails; }
-    public LocalDate getManufactureDate() { return manufactureDate; }
-    public void setManufactureDate(LocalDate manufactureDate) { this.manufactureDate = manufactureDate; }
-    public LocalDate getEntryIntoServiceDate() { return entryIntoServiceDate; }
-    public void setEntryIntoServiceDate(LocalDate entryIntoServiceDate) { this.entryIntoServiceDate = entryIntoServiceDate; }
-    public Integer getTotalFlightHours() { return totalFlightHours; }
-    public void setTotalFlightHours(Integer totalFlightHours) { this.totalFlightHours = totalFlightHours; }
-    public Integer getTotalFlightCycles() { return totalFlightCycles; }
-    public void setTotalFlightCycles(Integer totalFlightCycles) { this.totalFlightCycles = totalFlightCycles; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

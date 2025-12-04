@@ -2,6 +2,8 @@ package com.aviation.mro.modules.warehouse.domain.model;
 import com.aviation.mro.modules.warehouse.domain.enums.WarehouseType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.Nationalized;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +15,19 @@ public class Warehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @NotBlank
     @Column(unique = true)
     private String code; // کد انبار (مثلاً: WH-MAIN, WH-SPARES)
 
+    @Nationalized
     @NotBlank
     private String name;
 
+    @Nationalized
     private String description;
+
+    @Nationalized
     private String location; // موقعیت فیزیکی
 
     @Enumerated(EnumType.STRING)

@@ -5,6 +5,7 @@ import com.aviation.mro.modules.quality.domain.enums.CorrectiveActionStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class NonConformanceReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(unique = true, nullable = false)
     private String ncrNumber; // NCR-2024-001
 
@@ -33,15 +35,29 @@ public class NonConformanceReport {
     private CorrectiveActionStatus correctiveActionStatus = CorrectiveActionStatus.PENDING;
 
     // اطلاعات NCR
+    @Nationalized
     private String problemDescription;
+
+    @Nationalized
     private String rootCause;
+
+    @Nationalized
     private String immediateAction;
+
+    @Nationalized
     private String correctiveAction;
+
+    @Nationalized
     private String preventiveAction;
 
     // مسئولیت‌ها
+    @Nationalized
     private String raisedBy;
+
+    @Nationalized
     private String assignedTo;
+
+    @Nationalized
     private String verifiedBy;
 
     // زمان‌بندی
@@ -51,6 +67,8 @@ public class NonConformanceReport {
 
     // نتایج
     private Boolean isEffective;
+
+    @Nationalized
     private String verificationNotes;
 
     // Audit

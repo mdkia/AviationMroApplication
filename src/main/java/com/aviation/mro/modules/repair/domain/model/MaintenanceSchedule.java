@@ -5,6 +5,7 @@ import com.aviation.mro.modules.repair.domain.enums.MaintenanceType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -18,12 +19,15 @@ public class MaintenanceSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(nullable = false)
     private String scheduleNumber;
 
+    @Nationalized
     @Column(nullable = false)
     private String aircraftRegistration;
 
+    @Nationalized
     @Column(nullable = false)
     private String aircraftType;
 
@@ -58,6 +62,9 @@ public class MaintenanceSchedule {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Nationalized
     private String createdByUser;
+
+    @Nationalized
     private String updatedByUser;
 }

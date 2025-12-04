@@ -3,6 +3,8 @@ package com.aviation.mro.modules.notification.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Nationalized;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,18 +16,23 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Nationalized
     @Column(nullable = false, length = 300)
     private String title;
 
+    @Nationalized
     @Column(nullable = false, length = 1000)
     private String message;
 
+    @Nationalized
     @Column(nullable = false, length = 20)
     private String type;
 
+    @Nationalized
     @Column(length = 20)
     private String priority = "NORMAL";
 
+    @Nationalized
     @Column(name = "related_entity", length = 50)
     private String relatedEntity;
 
@@ -35,6 +42,7 @@ public class Notification {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Nationalized
     @Column(name = "created_by", length = 100)
     private String createdBy;
 }

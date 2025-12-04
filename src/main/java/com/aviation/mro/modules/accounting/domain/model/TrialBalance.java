@@ -3,6 +3,8 @@ package com.aviation.mro.modules.accounting.domain.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Nationalized;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -25,11 +27,12 @@ public class TrialBalance {
     private Boolean isBalanced = false;
 
     // برای گزارش‌گیری
+    @Nationalized
     private String periodCode;
 
     // Audit
     @CreationTimestamp
     private LocalDateTime createdAt;
-
+    @Nationalized
     private String generatedBy;
 }

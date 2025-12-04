@@ -3,6 +3,7 @@ package com.aviation.mro.modules.warehouse.domain.model;
 import com.aviation.mro.modules.warehouse.domain.enums.WithdrawalStatus;
 import com.aviation.mro.modules.warehouse.domain.model.InventoryItem;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Nationalized;
 
 import java.time.LocalDateTime;
 
@@ -19,18 +20,29 @@ public class StockWithdrawalRequest {
 
     private Integer requestedQuantity;
     private String purpose; // هدف خروج: REPAIR, SALES, SAMPLE, SCRAP, etc.
+
+    @Nationalized
     private String workOrderNumber; // شماره دستور کار مرتبط
+
+    @Nationalized
     private String referenceNumber; // شماره مرجع داخلی
 
     // اطلاعات درخواست
+    @Nationalized
     private String requestedBy;
     private LocalDateTime requestDate;
+
+    @Nationalized
     private String requestNotes;
 
     // اطلاعات تأیید
+    @Nationalized
     private String approvedBy;
     private LocalDateTime approvalDate;
+    @Nationalized
     private String approvalNotes;
+
+    @Nationalized
     private String rejectionReason;
 
     @Enumerated(EnumType.STRING)
