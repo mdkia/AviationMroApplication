@@ -30,12 +30,12 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Invalid Role", ex.getMessage()));
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiResponse> handleAll(Exception ex) {
-//        return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(ApiResponse.error("Server Error", ex.getMessage()));
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleAll(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Server Error", ex.getMessage()));
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {

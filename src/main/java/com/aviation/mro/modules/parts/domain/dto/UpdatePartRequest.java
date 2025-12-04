@@ -1,15 +1,12 @@
 package com.aviation.mro.modules.parts.domain.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 
-import jakarta.validation.constraints.Min;
-import lombok.Data;
-import java.math.BigDecimal;
-
-
-import lombok.Data;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 public class UpdatePartRequest {
     private String partNumber;
     private String partName;

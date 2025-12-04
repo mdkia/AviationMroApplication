@@ -8,6 +8,7 @@ import com.aviation.mro.modules.auth.repository.UserRepository;
 import com.aviation.mro.shared.exceptions.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,13 +22,10 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication & Authorization", description = "احراز هویت و مدیریت دسترسی‌ها")
+@RequiredArgsConstructor
 public class UserPermissionsController {
 
     private final UserRepository userRepository;
-
-    public UserPermissionsController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     /**
      * دریافت تمام دسترسی‌های کاربر جاری (خود کاربر)

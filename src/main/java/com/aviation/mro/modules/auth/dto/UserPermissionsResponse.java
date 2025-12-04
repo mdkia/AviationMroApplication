@@ -1,11 +1,14 @@
 package com.aviation.mro.modules.auth.dto;
 
+import lombok.*;
 
-import lombok.Data;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserPermissionsResponse {
     // اطلاعات کاربر
     private Long userId;

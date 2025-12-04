@@ -5,6 +5,7 @@ import com.aviation.mro.modules.auth.model.User;
 import com.aviation.mro.modules.auth.service.UserManagementService;
 import com.aviation.mro.shared.common.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,13 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/users")
 @PreAuthorize("hasAuthority('MANAGE_USERS')")
+@RequiredArgsConstructor
 public class UserManagementController {
 
     private final UserManagementService userManagementService;
-
-    public UserManagementController(UserManagementService userManagementService) {
-        this.userManagementService = userManagementService;
-    }
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {

@@ -1,13 +1,12 @@
 package com.aviation.mro.modules.auth.dto;
 
 import com.aviation.mro.modules.auth.model.Permission;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PermissionDTO {

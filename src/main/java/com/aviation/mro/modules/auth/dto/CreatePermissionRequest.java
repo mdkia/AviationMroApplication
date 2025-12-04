@@ -1,14 +1,17 @@
 package com.aviation.mro.modules.auth.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreatePermissionRequest {
     private String name;
     private String module;
     private String description;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getModule() { return module; }
-    public void setModule(String module) { this.module = module; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 }

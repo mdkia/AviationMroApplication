@@ -10,6 +10,7 @@ import com.aviation.mro.shared.common.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +22,10 @@ import java.util.Set;
 @RequestMapping("/api/admin")
 @Tag(name = "Role & Permission Management", description = "مدیریت نقش‌ها و دسترسی‌ها")
 @PreAuthorize("hasAnyAuthority('MANAGE_ROLES', 'MANAGE_SYSTEM')")
+@RequiredArgsConstructor
 public class RoleManagementController {
     private final RoleService roleService;
     private final PermissionService permissionService;
-
-    public RoleManagementController(RoleService roleService, PermissionService permissionService) {
-        this.roleService = roleService;
-        this.permissionService = permissionService;
-    }
 
     @PostMapping("/roles")
     @Operation(summary = "ایجاد نقش جدید")

@@ -1,14 +1,14 @@
 package com.aviation.mro.modules.auth.dto;
 
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateRoleRequest {
     private String name;
     private String displayName;
     private String description;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDisplayName() { return displayName; }
-    public void setDisplayName(String displayName) { this.displayName = displayName; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 }
