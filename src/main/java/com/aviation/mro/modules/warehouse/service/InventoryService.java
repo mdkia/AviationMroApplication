@@ -10,6 +10,7 @@ import com.aviation.mro.modules.warehouse.domain.model.StorageLocation;
 import com.aviation.mro.modules.warehouse.repository.InventoryItemRepository;
 import com.aviation.mro.modules.warehouse.repository.StorageLocationRepository;
 import com.aviation.mro.shared.exceptions.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,19 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class InventoryService {
-
     private final InventoryItemRepository inventoryItemRepository;
     private final AircraftPartRepository aircraftPartRepository;
     private final StorageLocationRepository storageLocationRepository;
-
-    public InventoryService(InventoryItemRepository inventoryItemRepository,
-                            AircraftPartRepository aircraftPartRepository,
-                            StorageLocationRepository storageLocationRepository) {
-        this.inventoryItemRepository = inventoryItemRepository;
-        this.aircraftPartRepository = aircraftPartRepository;
-        this.storageLocationRepository = storageLocationRepository;
-    }
 
     public List<InventoryItemResponse> getAllInventoryItems() {
         return inventoryItemRepository.findAll().stream()

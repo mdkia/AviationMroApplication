@@ -1,6 +1,5 @@
 package com.aviation.mro.modules.warehouse.service;
 
-
 import com.aviation.mro.modules.warehouse.domain.dto.WarehouseRequest;
 import com.aviation.mro.modules.warehouse.domain.dto.WarehouseResponse;
 import com.aviation.mro.modules.warehouse.domain.enums.WarehouseType;
@@ -8,6 +7,7 @@ import com.aviation.mro.modules.warehouse.domain.model.Warehouse;
 import com.aviation.mro.modules.warehouse.repository.WarehouseRepository;
 import com.aviation.mro.modules.warehouse.repository.StorageLocationRepository;
 import com.aviation.mro.shared.exceptions.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +16,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
     private final StorageLocationRepository storageLocationRepository;
-
-    public WarehouseService(WarehouseRepository warehouseRepository,
-                            StorageLocationRepository storageLocationRepository) {
-        this.warehouseRepository = warehouseRepository;
-        this.storageLocationRepository = storageLocationRepository;
-    }
 
     public List<WarehouseResponse> getAllWarehouses() {
         return warehouseRepository.findAll().stream()

@@ -3,12 +3,20 @@ package com.aviation.mro.modules.warehouse.domain.model;
 import com.aviation.mro.modules.warehouse.domain.enums.WithdrawalStatus;
 import com.aviation.mro.modules.warehouse.domain.model.InventoryItem;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stock_withdrawal_requests")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class StockWithdrawalRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,9 +73,6 @@ public class StockWithdrawalRequest {
         updatedAt = LocalDateTime.now();
     }
 
-    // Constructors
-    public StockWithdrawalRequest() {}
-
     public StockWithdrawalRequest(InventoryItem inventoryItem, Integer requestedQuantity,
                                   String purpose, String requestedBy) {
         this.inventoryItem = inventoryItem;
@@ -76,38 +81,4 @@ public class StockWithdrawalRequest {
         this.requestedBy = requestedBy;
         this.requestDate = LocalDateTime.now();
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public InventoryItem getInventoryItem() { return inventoryItem; }
-    public void setInventoryItem(InventoryItem inventoryItem) { this.inventoryItem = inventoryItem; }
-    public Integer getRequestedQuantity() { return requestedQuantity; }
-    public void setRequestedQuantity(Integer requestedQuantity) { this.requestedQuantity = requestedQuantity; }
-    public String getPurpose() { return purpose; }
-    public void setPurpose(String purpose) { this.purpose = purpose; }
-    public String getWorkOrderNumber() { return workOrderNumber; }
-    public void setWorkOrderNumber(String workOrderNumber) { this.workOrderNumber = workOrderNumber; }
-    public String getReferenceNumber() { return referenceNumber; }
-    public void setReferenceNumber(String referenceNumber) { this.referenceNumber = referenceNumber; }
-    public String getRequestedBy() { return requestedBy; }
-    public void setRequestedBy(String requestedBy) { this.requestedBy = requestedBy; }
-    public LocalDateTime getRequestDate() { return requestDate; }
-    public void setRequestDate(LocalDateTime requestDate) { this.requestDate = requestDate; }
-    public String getRequestNotes() { return requestNotes; }
-    public void setRequestNotes(String requestNotes) { this.requestNotes = requestNotes; }
-    public String getApprovedBy() { return approvedBy; }
-    public void setApprovedBy(String approvedBy) { this.approvedBy = approvedBy; }
-    public LocalDateTime getApprovalDate() { return approvalDate; }
-    public void setApprovalDate(LocalDateTime approvalDate) { this.approvalDate = approvalDate; }
-    public String getApprovalNotes() { return approvalNotes; }
-    public void setApprovalNotes(String approvalNotes) { this.approvalNotes = approvalNotes; }
-    public String getRejectionReason() { return rejectionReason; }
-    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
-    public WithdrawalStatus getStatus() { return status; }
-    public void setStatus(WithdrawalStatus status) { this.status = status; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

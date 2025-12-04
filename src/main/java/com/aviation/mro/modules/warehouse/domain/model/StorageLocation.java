@@ -4,10 +4,18 @@ import com.aviation.mro.modules.warehouse.domain.enums.StorageType;
 import com.aviation.mro.modules.warehouse.domain.enums.TemperatureZone;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
 @Entity
 @Table(name = "storage_locations")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class StorageLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,34 +46,9 @@ public class StorageLocation {
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-    // Constructors
-    public StorageLocation() {}
-
     public StorageLocation(String locationCode, String name, Warehouse warehouse) {
         this.locationCode = locationCode;
         this.name = name;
         this.warehouse = warehouse;
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getLocationCode() { return locationCode; }
-    public void setLocationCode(String locationCode) { this.locationCode = locationCode; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public Double getMaxWeight() { return maxWeight; }
-    public void setMaxWeight(Double maxWeight) { this.maxWeight = maxWeight; }
-    public Double getMaxVolume() { return maxVolume; }
-    public void setMaxVolume(Double maxVolume) { this.maxVolume = maxVolume; }
-    public StorageType getStorageType() { return storageType; }
-    public void setStorageType(StorageType storageType) { this.storageType = storageType; }
-    public TemperatureZone getTemperatureZone() { return temperatureZone; }
-    public void setTemperatureZone(TemperatureZone temperatureZone) { this.temperatureZone = temperatureZone; }
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
-    public Warehouse getWarehouse() { return warehouse; }
-    public void setWarehouse(Warehouse warehouse) { this.warehouse = warehouse; }
 }
