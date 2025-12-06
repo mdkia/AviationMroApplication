@@ -1,12 +1,14 @@
 package com.aviation.mro.modules.repair.domain.dto;
 
-
 import com.aviation.mro.modules.repair.domain.enums.MaintenanceType;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 public class MaintenanceScheduleResponse {
     private Long id;
     private String scheduleNumber;

@@ -1,14 +1,15 @@
-// modules/quality/domain/dto/InspectionPlanResponse.java
 package com.aviation.mro.modules.quality.domain.dto;
 
 import com.aviation.mro.modules.quality.domain.enums.InspectionType;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-@Data
+@Getter
+@Setter
 public class InspectionPlanResponse {
     private Long id;
     private String planNumber;
@@ -24,8 +25,8 @@ public class InspectionPlanResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<QualityCheckResponse> checkpoints = new ArrayList<>();
-
-    @Data
+    @Getter
+    @Setter
     public static class QualityCheckResponse {
         private Long id;
         private String checkCode;

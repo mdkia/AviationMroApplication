@@ -1,6 +1,5 @@
 package com.aviation.mro.modules.repair.domain.model;
 
-
 import com.aviation.mro.modules.repair.domain.enums.*;
 import com.aviation.mro.modules.auth.model.User;
 import com.aviation.mro.modules.parts.domain.model.AircraftPart;

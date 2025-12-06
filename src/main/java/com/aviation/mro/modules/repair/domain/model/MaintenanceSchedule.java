@@ -1,6 +1,5 @@
 package com.aviation.mro.modules.repair.domain.model;
 
-
 import com.aviation.mro.modules.repair.domain.enums.MaintenanceType;
 import jakarta.persistence.*;
 import lombok.Data;

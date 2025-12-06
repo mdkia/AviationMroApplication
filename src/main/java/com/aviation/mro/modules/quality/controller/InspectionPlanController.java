@@ -1,4 +1,3 @@
-// modules/quality/controller/InspectionPlanController.java
 package com.aviation.mro.modules.quality.controller;
 
 import com.aviation.mro.modules.quality.domain.dto.InspectionPlanRequest;

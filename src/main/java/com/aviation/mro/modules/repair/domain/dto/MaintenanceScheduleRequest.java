@@ -1,14 +1,16 @@
 package com.aviation.mro.modules.repair.domain.dto;
 
-
 import com.aviation.mro.modules.repair.domain.enums.MaintenanceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 public class MaintenanceScheduleRequest {
 
     @NotBlank(message = "Aircraft registration is required")
