@@ -3,8 +3,11 @@ package com.aviation.mro.modules.sales.domain.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class QuotationItemRequest {
 
     @NotNull(message = "Part ID is required")

@@ -2,11 +2,15 @@ package com.aviation.mro.modules.sales.domain.dto;
 
 import com.aviation.mro.modules.sales.domain.enums.SalesOrderStatus;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class SalesOrderResponse {
     private Long id;
     private String orderNumber;

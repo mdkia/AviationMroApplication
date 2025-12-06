@@ -1,4 +1,3 @@
-// AccountingReportHelper.java
 package com.aviation.mro.modules.reporting.service;
 
 import com.aviation.mro.modules.accounting.domain.model.JournalEntry;

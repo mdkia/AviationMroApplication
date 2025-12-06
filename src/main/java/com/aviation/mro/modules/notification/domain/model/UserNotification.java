@@ -1,4 +1,3 @@
-// UserNotification.java
 package com.aviation.mro.modules.notification.domain.model;
 
 import jakarta.persistence.*;

@@ -4,9 +4,13 @@ import com.aviation.mro.modules.sales.domain.enums.InvoiceStatus;
 import com.aviation.mro.modules.sales.domain.enums.PaymentStatus;
 import com.aviation.mro.modules.sales.domain.enums.PaymentMethod;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 public class InvoiceResponse {
     private Long id;
     private String invoiceNumber;

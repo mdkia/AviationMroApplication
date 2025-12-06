@@ -1,4 +1,3 @@
-// NotificationDto.java
 package com.aviation.mro.modules.notification.domain.dto;
 
 import lombok.Data;

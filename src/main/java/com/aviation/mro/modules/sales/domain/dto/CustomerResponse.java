@@ -2,8 +2,12 @@ package com.aviation.mro.modules.sales.domain.dto;
 
 import com.aviation.mro.modules.sales.domain.enums.CustomerType;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
-@Data
+@Getter
+@Setter
 public class CustomerResponse {
     private Long id;
     private String customerCode;

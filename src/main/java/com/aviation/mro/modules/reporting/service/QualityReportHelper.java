@@ -1,4 +1,3 @@
-// QualityReportHelper.java
 package com.aviation.mro.modules.reporting.service;
 
 import com.aviation.mro.modules.quality.domain.enums.NCRStatus;
